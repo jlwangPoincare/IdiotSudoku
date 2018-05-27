@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Idiot Sudoku Solver</title>
+    <style>
+div {
+  text-align: center;
+}
+
+table, td {
+  border: 1px solid black;
+  /*border-collapse: collapse;*/
+}
+
+table {
+  margin: 0 auto;
+}
+
+td {
+  /*padding: 15px;*/
+}
+
+.cell {
+  width: 81px;
+  /*height: 50px;*/
+  font-family: arial;
+  font-size: 53px;
+  /*font-weight: bold;*/
+  padding: 10px 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.title {
+  margin: auto;
+}
+
+#solveButton {
+  margin-top: 20px;
+}
+    </style>
+    <script>
+// Javascript for sudoku solver
+// By Skyclad
+// Start Date: May 19 2018
+var SUDOKU_NUMBER = 81;
+var NINE = 9;
+
+function changeNumberBy1() {
+  this.innerHTML = (parseInt(this.innerHTML) + 1) % 10;
+  fadeFor0(this);
+  //console.log(this.innerHTML);
+}
+
+function fadeFor0(elem) {
+  if (elem.innerHTML == "0") {
+    elem.style.color = "#DDDDDD";
+  }
+  else {
+    elem.style.color = "black";
+  }
+}
+
+// need reconstruct
+// board data structure: (Java-like, omit unnecessary modifiers)
+/*
+   class Board {
+   List<List<Cell>> cells;
+
+   Board() {
+   cells = new ArrayList<ArrayList<Cell>>(9);
+   for (int i = 0; i < 9; ++i) {
+   cells[i] = new ArrayList<Cell>(9);
+   for (int j = 0; j < 9; ++j) {
+   cells[i][j] = new Cell();
+   }
+   }
+   }
+   }
+
+   class Cell {
+   Integer cellNum;
+   boolean[] candidates;
+
+   Cell() {
+   cellNum = null;
+   candidates = new boolean[9];
+   for (int i = 0; i < 9; ++i) {
+   candidates[i] = false;
+   }
+   }
+   }
+ */
+
+function getBoard()
+{
+  var board = {};
+  //board.cells = ;
+  board.cells = new Array(NINE);
+  for (var i = 0; i < NINE; ++i)
+  {
+    board.cells[i] = new Array(NINE);
+    for (var j = 0; j < NINE; ++j)
+    {
+      board.cells[i][j] = {};
+      board.cells[i][j].cellNum = 0;
+      board.cells[i][j].candidates = new Array(NINE);
+      for (var k = 0; k < NINE; ++k)
+      {
+        board.cells[i][j].candidates[k] = true;
+      }
+    }
+  }
+  var cells = document.getElementsByClassName("cell");
+  for (var i = 0; i < SUDOKU_NUMBER; ++i)
+  {
+    var id = cells[i].getAttribute("id");
+    var row = parseInt(id[1]);
+    var col = parseInt(id[3]);
+    var cellNum = parseInt(cells[i].innerHTML);
+    //console.log("row = " + row);
+    //console.log("col = " + col);
+    //console.log("content = " + cellNum);
+    board.cells[row - 1][col - 1].cellNum = cellNum;
+  }
+  return board;
+}
+
+function setBoard(board)
+{
+  var cells = document.getElementsByClassName("cell");
+  for (var i = 0; i < SUDOKU_NUMBER; ++i)
+  {
+    var id = cells[i].getAttribute("id");
+    var row = parseInt(id[1]);
+    var col = parseInt(id[3]);
+    //var cellNum = parseInt(cells[i].innerHTML);
+    //console.log("row = " + row);
+    //console.log("col = " + col);
+    //console.log("content = " + cellNum);
+    //ret[row - 1][col - 1] = cellNum;
+    cells[i].innerHTML = board.cells[row - 1][col - 1].cellNum;
+    fadeFor0(cells[i]);
+  }
+}
+
+function printBoard(board)
+{
+  for (var i = 0; i < NINE; ++i)
+  {
+    var line = "";
+    for (var j = 0; j < NINE; ++j)
+    {
+      line = line + " " + board.cells[i][j].cellNum;
+    }
+    console.log(line);
+  }
+}
+
+function constructCandidates(board)
+{
+  for (var i = 0; i < NINE; ++i)
+  {
+    for (var j = 0; j < NINE; ++j)
+    {
+      if (board.cells[i][j].cellNum != 0)
+      {
+      }
+    }
+  }
+}
+
+function clickSolve()
+{
+  var board = getBoard();
+  printBoard(board);
+  //    for (var i = 0; i < NINE; ++i) {
+  //        for (var j = 0; j < NINE; ++j) {
+  //            board[i][j] = 9;
+  //        }
+  //    }
+  //solve(board, candi);
+  setBoard(board);
+  //console.log("I am too stupid to solve this");
+  //alert("I am too stupid to solve this");
+}
+
+window.onload = function ()
+{
+  var cells = document.getElementsByClassName("cell");
+  //assign board: do later
+  //var ret = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //[0, 0, 0, 0, 0, 0, 0, 0, 0]];
+  for (var i = 0; i < SUDOKU_NUMBER; ++i)
+  {
+    cells[i].onclick = changeNumberBy1;
+    fadeFor0(cells[i]);
+  }
+}
+    </script>
+  </head>
+  <body>
+    <div class="title"><h1>Sudoku</h1></div>
+    <div class="desc"><p>This is a sudoku</p></div>
+    <table id="sudokuBody">
+      <tr>
+        <td><div class="cell" id="r1c1">0</div></td><td><div class="cell" id="r1c2">5</div></td><td><div class="cell" id="r1c3">0</div></td><td><div class="cell" id="r1c4">0</div></td><td><div class="cell" id="r1c5">0</div></td><td><div class="cell" id="r1c6">0</div></td><td><div class="cell" id="r1c7">0</div></td><td><div class="cell" id="r1c8">2</div></td><td><div class="cell" id="r1c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r2c1">4</div></td><td><div class="cell" id="r2c2">0</div></td><td><div class="cell" id="r2c3">0</div></td><td><div class="cell" id="r2c4">2</div></td><td><div class="cell" id="r2c5">0</div></td><td><div class="cell" id="r2c6">6</div></td><td><div class="cell" id="r2c7">0</div></td><td><div class="cell" id="r2c8">0</div></td><td><div class="cell" id="r2c9">7</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r3c1">0</div></td><td><div class="cell" id="r3c2">0</div></td><td><div class="cell" id="r3c3">8</div></td><td><div class="cell" id="r3c4">0</div></td><td><div class="cell" id="r3c5">3</div></td><td><div class="cell" id="r3c6">0</div></td><td><div class="cell" id="r3c7">1</div></td><td><div class="cell" id="r3c8">0</div></td><td><div class="cell" id="r3c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r4c1">0</div></td><td><div class="cell" id="r4c2">1</div></td><td><div class="cell" id="r4c3">0</div></td><td><div class="cell" id="r4c4">0</div></td><td><div class="cell" id="r4c5">0</div></td><td><div class="cell" id="r4c6">0</div></td><td><div class="cell" id="r4c7">0</div></td><td><div class="cell" id="r4c8">6</div></td><td><div class="cell" id="r4c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r5c1">0</div></td><td><div class="cell" id="r5c2">0</div></td><td><div class="cell" id="r5c3">9</div></td><td><div class="cell" id="r5c4">0</div></td><td><div class="cell" id="r5c5">0</div></td><td><div class="cell" id="r5c6">0</div></td><td><div class="cell" id="r5c7">5</div></td><td><div class="cell" id="r5c8">0</div></td><td><div class="cell" id="r5c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r6c1">0</div></td><td><div class="cell" id="r6c2">7</div></td><td><div class="cell" id="r6c3">0</div></td><td><div class="cell" id="r6c4">0</div></td><td><div class="cell" id="r6c5">0</div></td><td><div class="cell" id="r6c6">0</div></td><td><div class="cell" id="r6c7">0</div></td><td><div class="cell" id="r6c8">9</div></td><td><div class="cell" id="r6c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r7c1">0</div></td><td><div class="cell" id="r7c2">0</div></td><td><div class="cell" id="r7c3">5</div></td><td><div class="cell" id="r7c4">0</div></td><td><div class="cell" id="r7c5">8</div></td><td><div class="cell" id="r7c6">0</div></td><td><div class="cell" id="r7c7">3</div></td><td><div class="cell" id="r7c8">0</div></td><td><div class="cell" id="r7c9">0</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r8c1">7</div></td><td><div class="cell" id="r8c2">0</div></td><td><div class="cell" id="r8c3">0</div></td><td><div class="cell" id="r8c4">9</div></td><td><div class="cell" id="r8c5">0</div></td><td><div class="cell" id="r8c6">1</div></td><td><div class="cell" id="r8c7">0</div></td><td><div class="cell" id="r8c8">0</div></td><td><div class="cell" id="r8c9">4</div></td>
+      </tr>
+      <tr>
+        <td><div class="cell" id="r9c1">0</div></td><td><div class="cell" id="r9c2">2</div></td><td><div class="cell" id="r9c3">0</div></td><td><div class="cell" id="r9c4">0</div></td><td><div class="cell" id="r9c5">0</div></td><td><div class="cell" id="r9c6">0</div></td><td><div class="cell" id="r9c7">0</div></td><td><div class="cell" id="r9c8">7</div></td><td><div class="cell" id="r9c9">0</div></td>
+      </tr>
+    </table>
+    <div><button type="button" id="solveButton" onclick="clickSolve()">Click Me to Solve!</button></div>
+  </body>
+</html>
