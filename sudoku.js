@@ -112,8 +112,15 @@ function printBoard(board)
       line = line + " " + "col: " + (j + 1);// + board.cells[i][j].cellNum;
       line = line + " " + "cellNum: " + board.cells[i][j].cellNum;
       console.log(line);
-      var line2 = "can: " + board.cells[i][j].candidates;
-      console.log(line2);
+      if (board.cells[i][j].cellNum == 0)
+      {
+        var line2 = "candidates:";
+        for (var k = 0; k < NINE; ++k)
+        {
+          line2 = line2 + " " + (board.cells[i][j].candidates[k] ? (k + 1) : "_");
+        }
+        console.log(line2);
+      }
     }
   }
 }
@@ -188,19 +195,113 @@ function constructCandidates(board)
   }
 }
 
+function isSolved(board)
+{
+  for (var i = 0; i < NINE; ++i)
+  {
+    for (var j = 0; j < NINE; ++j)
+    {
+      if (board.cells[i][j].cellNum == 0)
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function rule1_OnlyCandidate(board)
+{
+  var changes = 0;
+  for (var i = 0; i < NINE; ++i)
+  {
+    for (var j = 0; j < NINE; ++j)
+    {
+      // inspect one cell
+      if (board.cells[i][j].cellNum == 0)
+      {
+        var candis = 0;
+        var option = 0;
+        for (var k = 0; k < NINE; ++k)
+        {
+          if (board.cells[i][j].candidates[k])
+          {
+            candis += 1;
+            option = k + 1;
+          }
+        }
+        if (candis == 1)
+        {
+          changes += 1;
+          // fill in the only candidate
+          board.cells[i][j].cellNum = option;
+          // wipe out candidates of this cell
+          wipeOutCandidates(board, i, j);
+          // remove this number from candidates of the same row, col and group
+          // inspect the same row
+          for (var jj = 0; jj < NINE; ++jj)
+          {
+            if (jj != j)
+            {
+              board.cells[i][jj].candidates[option - 1] = false;
+            }
+          }
+          // inspect the same column
+          for (var ii = 0; ii < NINE; ++ii)
+          {
+            if (ii != i)
+            {
+              board.cells[ii][j].candidates[option - 1] = false;
+            }
+          }
+          // inspect the same group
+          var groupList = constructSameGroup(i, j);
+          for (var kk = 0; kk < NINE; ++kk)
+          {
+            if (groupList[kk].row != i && groupList[kk].col != j)
+            {
+              board.cells[groupList[kk].row][groupList[kk].col].candidates[option - 1] = false;
+            }
+          }
+        }
+      }
+    }
+  }
+  return changes;
+}
+
 function solve(board)
 {
   constructCandidates(board);
+  //printBoard(board);
+  while (true)
+  {
+    var changes = 0;
+    changes += rule1_OnlyCandidate(board);
+    if (isSolved(board))
+    {
+      return true;
+    }
+    if (changes == 0)
+    {
+      return false;
+    }
+  }
 }
 
 function clickSolve()
 {
   var board = getBoard();
-  printBoard(board);
-  //solve(board);
+  var solved = solve(board);
   setBoard(board);
-  //console.log("I am too stupid to solve this");
-  //alert("I am too stupid to solve this");
+  if (solved)
+  {
+    alert("Great! Sudoku solved!");
+  }
+  else
+  {
+    alert("Sorry! I am too stupid to solve this! This is all I can do now...");
+  }
 }
 
 window.onload = function ()
